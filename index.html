@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Control Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌡️</text></svg>">
+</head>
+<body>
+    <div class="container">
+                 <header>
+             <h1>🌡️ Temperature Control Game</h1>
+             <p class="subtitle">Hidden Sweet Spot Challenge</p>
+         </header>
+
+        <div class="game-area">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            
+            <div class="game-info">
+                <div class="info-panel">
+                    <h3>Game Status</h3>
+                    <div id="gameStatus">
+                        <p>Temperature: <span id="currentTemp">50%</span></p>
+                        <p>Time Left: <span id="timeLeft">60s</span></p>
+                        <p>Quality: <span id="currentQuality">0%</span></p>
+                    </div>
+                </div>
+
+                <div class="instructions-panel">
+                    <h3>Instructions</h3>
+                    <ul>
+                        <li>Keep temperature in the hidden sweet spot</li>
+                        <li>Sweet spot changes location every 6-14 seconds</li>
+                        <li>Green = good, Red = bad (0.5 second delay)</li>
+                        <li>⚠️ Stay out of sweet spot for 15s = COOK FAILS!</li>
+                        <li>Maximize quality over 60 seconds</li>
+                        <li>Earn trays based on your cooking performance!</li>
+                    </ul>
+                </div>
+
+                <div class="inventory-panel">
+                    <h3>🍽️ Kitchen Inventory</h3>
+                    <div id="inventoryStats" class="inventory-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Trays:</span>
+                            <span class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Games Played:</span>
+                            <span class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Success Rate:</span>
+                            <span class="stat-value">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Best Score:</span>
+                            <span class="stat-value">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Failed Cooks:</span>
+                            <span class="stat-value failure-count">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Average Score:</span>
+                            <span class="stat-value">0%</span>
+                        </div>
+                    </div>
+                    <div class="recent-trays-section">
+                        <h4>Recent Activity:</h4>
+                        <div id="recentTrays" class="recent-trays">
+                            <div class="no-trays">Start playing to collect trays!</div>
+                        </div>
+                    </div>
+                    <button id="clearInventory" class="clear-inventory-btn">Clear All Data</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button id="startGame" class="start-btn">Start Game</button>
+            <button id="resetGame" class="reset-btn" disabled>Reset Game</button>
+        </div>
+
+                 <footer>
+             <p>Web-based temperature control challenge game</p>
+             <p><a href="https://github.com/ifbars/temp-game" target="_blank">View on GitHub</a></p>
+         </footer>
+    </div>
+
+    <!-- Load JavaScript modules -->
+    <script src="js/config.js"></script>
+    <script src="js/gameState.js"></script>
+    <script src="js/inputHandler.js"></script>
+    <script src="js/feedbackSystem.js"></script>
+    <script src="js/inventorySystem.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/gameController.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

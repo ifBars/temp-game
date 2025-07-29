@@ -1,0 +1,25 @@
+title: "Temperature Control Game"
+description: "Web-based temperature control minigame with dynamic sweet spots"
+theme: jekyll-theme-cayman
+
+# GitHub Pages settings
+plugins:
+  - jekyll-sitemap
+
+# Custom settings
+url: "https://ifbars.github.io"
+baseurl: "/temp-game"
+
+# Include files
+include:
+  - js/
+  - css/
+  - index.html
+
+# Exclude files from GitHub Pages build
+exclude:
+  - src/
+  - main.py
+  - requirements.txt
+  - project_outline.markdown
+  - project_outline.pdf 
