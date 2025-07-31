@@ -13,7 +13,7 @@ class GameState {
         this.consecutiveBadTime = 0.0; // Consecutive time outside sweet spot
         this.lastTargetChange = 0.0;
         this.nextShiftTime = this.getRandomShiftInterval(); // Random interval for first shift
-        this.startTime = Date.now() / 1000; // Convert to seconds
+        this.startTime = null; // Will be set when game actually starts
         this.history = [];
         
         this.running = false;
@@ -31,10 +31,12 @@ class GameState {
     }
     
     getCurrentTime() {
+        if (!this.startTime) return 0;
         return (Date.now() / 1000) - this.startTime;
     }
     
     getTimeRemaining() {
+        if (!this.gameStarted) return GameConfig.TOTAL_GAME_TIME;
         return Math.max(0, GameConfig.TOTAL_GAME_TIME - this.getCurrentTime());
     }
     

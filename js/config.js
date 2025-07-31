@@ -3,8 +3,8 @@
  */
 const GameConfig = {
     // Display settings
-    WINDOW_WIDTH: 800,
-    WINDOW_HEIGHT: 600,
+    WINDOW_WIDTH: 700,
+    WINDOW_HEIGHT: 450,
     WINDOW_TITLE: "Temperature Control Game",
     FPS: 10,
     

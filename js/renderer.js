@@ -46,17 +46,43 @@ class Renderer {
     }
     
     renderWelcomeScreen() {
-        this.ctx.fillStyle = GameConfig.rgbToColor(GameConfig.BLACK);
-        this.ctx.font = '36px Arial';
+        // Add a subtle pulsing effect
+        const time = Date.now() / 1000;
+        const pulse = 0.95 + Math.sin(time * 2) * 0.05;
+        
+        // Main title with gradient effect
+        this.ctx.fillStyle = GameConfig.rgbToColor([102, 126, 234]);
+        this.ctx.font = 'bold 42px Arial';
         this.ctx.textAlign = 'center';
+        this.ctx.save();
+        this.ctx.scale(pulse, pulse);
+        this.ctx.fillText('🌡️ Temperature Control Challenge', this.canvasWidth / 2 / pulse, (this.canvasHeight / 2 - 80) / pulse);
+        this.ctx.restore();
         
-        this.ctx.fillText('Welcome to Temperature Control!', this.canvasWidth / 2, this.canvasHeight / 2 - 60);
+        // Subtitle
+        this.ctx.fillStyle = GameConfig.rgbToColor([118, 75, 162]);
+        this.ctx.font = 'italic 28px Arial';
+        this.ctx.fillText('Master the Hidden Sweet Spot', this.canvasWidth / 2, this.canvasHeight / 2 - 30);
         
-        this.ctx.font = '24px Arial';
-        this.ctx.fillText('Press Start Game or Spacebar to begin', this.canvasWidth / 2, this.canvasHeight / 2 - 20);
-        this.ctx.fillText('Use arrow keys to control temperature', this.canvasWidth / 2, this.canvasHeight / 2 + 20);
-        this.ctx.fillText('Find the hidden sweet spot and stay in it!', this.canvasWidth / 2, this.canvasHeight / 2 + 60);
-        this.ctx.fillText('⚠️ Stay out too long and you\'ll fail the cook!', this.canvasWidth / 2, this.canvasHeight / 2 + 100);
+        // Instructions with better styling
+        this.ctx.fillStyle = GameConfig.rgbToColor([80, 80, 80]);
+        this.ctx.font = '22px Arial';
+        this.ctx.fillText('🎮 Press Start Game or Spacebar to begin', this.canvasWidth / 2, this.canvasHeight / 2 + 20);
+        
+        this.ctx.font = '20px Arial';
+        this.ctx.fillText('🎯 Use arrow keys or buttons to control temperature', this.canvasWidth / 2, this.canvasHeight / 2 + 50);
+        this.ctx.fillText('🔍 Find the hidden sweet spot and stay in it!', this.canvasWidth / 2, this.canvasHeight / 2 + 80);
+        
+        // Warning with emphasis
+        this.ctx.fillStyle = GameConfig.rgbToColor([244, 67, 54]);
+        this.ctx.font = 'bold 20px Arial';
+        this.ctx.fillText('⚠️ Stay out for 15 seconds = COOK FAILS!', this.canvasWidth / 2, this.canvasHeight / 2 + 120);
+        
+        // Animated dots
+        const dots = '...'.substring(0, Math.floor(time * 2) % 4);
+        this.ctx.fillStyle = GameConfig.rgbToColor([102, 126, 234]);
+        this.ctx.font = '18px Arial';
+        this.ctx.fillText(`Ready to cook${dots}`, this.canvasWidth / 2, this.canvasHeight / 2 + 160);
     }
     
     renderGameScreen(gameState, feedbackSystem) {
@@ -258,16 +284,40 @@ class Renderer {
         const currentQualityEl = document.getElementById('currentQuality');
         
         if (currentTempEl) {
-            currentTempEl.textContent = `${gameState.actualTemperature}%`;
+            if (!gameState.gameStarted) {
+                currentTempEl.textContent = '-- Ready --';
+                currentTempEl.style.color = '#667eea';
+                currentTempEl.style.fontStyle = 'italic';
+            } else {
+                currentTempEl.textContent = `${gameState.actualTemperature}%`;
+                currentTempEl.style.color = '';
+                currentTempEl.style.fontStyle = '';
+            }
         }
         
         if (timeLeftEl) {
-            const timeLeft = Math.ceil(gameState.getTimeRemaining());
-            timeLeftEl.textContent = `${timeLeft}s`;
+            if (!gameState.gameStarted) {
+                timeLeftEl.textContent = 'Press Start!';
+                timeLeftEl.style.color = '#667eea';
+                timeLeftEl.style.fontStyle = 'italic';
+            } else {
+                const timeLeft = Math.ceil(gameState.getTimeRemaining());
+                timeLeftEl.textContent = `${timeLeft}s`;
+                timeLeftEl.style.color = timeLeft <= 10 ? '#f44336' : '';
+                timeLeftEl.style.fontStyle = '';
+            }
         }
         
         if (currentQualityEl) {
-            currentQualityEl.textContent = `${gameState.getQualityScore()}%`;
+            if (!gameState.gameStarted) {
+                currentQualityEl.textContent = '0%';
+                currentQualityEl.style.color = '#999';
+            } else {
+                const quality = gameState.getQualityScore();
+                currentQualityEl.textContent = `${quality}%`;
+                currentQualityEl.style.color = quality >= 70 ? '#4CAF50' : 
+                                             quality >= 40 ? '#FF9800' : '#f44336';
+            }
         }
     }
     
