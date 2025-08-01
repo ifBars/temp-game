@@ -14,21 +14,47 @@
              <p class="subtitle">Hidden Sweet Spot Challenge</p>
          </header>
 
-        <div class="game-area">
-            <canvas id="gameCanvas" width="700" height="450"></canvas>
-            
-            <div class="game-info">
-                <div class="info-panel">
-                    <h3>Game Status</h3>
-                    <div id="gameStatus">
-                        <p>Temperature: <span id="currentTemp">50%</span></p>
-                        <p>Time Left: <span id="timeLeft">60s</span></p>
-                        <p>Quality: <span id="currentQuality">0%</span></p>
+        <div class="game-layout">
+            <!-- Main Game Section -->
+            <div class="game-main">
+                <div class="canvas-section">
+                    <canvas id="gameCanvas" width="700" height="450"></canvas>
+                    <div class="game-controls">
+                        <button id="startGame" class="start-btn">Start Game</button>
+                        <button id="resetGame" class="reset-btn" disabled>Reset Game</button>
                     </div>
                 </div>
+                
+                <!-- Game Status & Controls -->
+                <div class="game-sidebar">
+                    <div class="status-controls-group">
+                        <div class="info-panel">
+                            <h3>🎮 Game Status</h3>
+                            <div id="gameStatus">
+                                <p>Temperature: <span id="currentTemp">50%</span></p>
+                                <p>Time Left: <span id="timeLeft">60s</span></p>
+                                <p>Quality: <span id="currentQuality">0%</span></p>
+                            </div>
+                        </div>
 
+                        <div class="controls-panel">
+                            <h3>🌡️ Temperature Controls</h3>
+                            <div class="controls">
+                                <button id="tempUp" class="control-btn">↑ Increase (+5%)</button>
+                                <button id="tempDown" class="control-btn">↓ Decrease (-5%)</button>
+                            </div>
+                            <div class="control-info">
+                                Use arrow keys or buttons to adjust temperature
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary Information Section -->
+            <div class="game-secondary">
                 <div class="instructions-panel">
-                    <h3>Instructions</h3>
+                    <h3>📋 How to Play</h3>
                     <ul>
                         <li>Keep temperature in the hidden sweet spot</li>
                         <li>Sweet spot changes location every 6-14 seconds</li>
@@ -37,17 +63,6 @@
                         <li>Maximize quality over 60 seconds</li>
                         <li>Earn trays based on your cooking performance!</li>
                     </ul>
-                </div>
-
-                <div class="controls-panel">
-                    <h3>Temperature Controls</h3>
-                    <div class="controls">
-                        <button id="tempUp" class="control-btn">↑ Increase (+5%)</button>
-                        <button id="tempDown" class="control-btn">↓ Decrease (-5%)</button>
-                    </div>
-                    <div class="control-info">
-                        Use arrow keys or buttons to adjust temperature
-                    </div>
                 </div>
 
                 <div class="inventory-panel">
@@ -87,11 +102,6 @@
                     <button id="clearInventory" class="clear-inventory-btn">Clear All Data</button>
                 </div>
             </div>
-        </div>
-
-        <div class="game-controls">
-            <button id="startGame" class="start-btn">Start Game</button>
-            <button id="resetGame" class="reset-btn" disabled>Reset Game</button>
         </div>
 
                  <footer>
