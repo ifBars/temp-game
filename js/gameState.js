@@ -2,11 +2,12 @@
  * Game state management for the temperature control game.
  */
 class GameState {
-    constructor() {
+    constructor(config = GameConfig) {
+        this.config = config;
         this.actualTemperature = this.getRandomTemperature();
-        this.targetCenter = GameConfig.SWEET_SPOT_START_CENTER;
-        this.targetMin = this.targetCenter - (GameConfig.SWEET_SPOT_SIZE / 2);
-        this.targetMax = this.targetCenter + (GameConfig.SWEET_SPOT_SIZE / 2);
+        this.targetCenter = this.config.SWEET_SPOT_START_CENTER;
+        this.targetMin = this.targetCenter - (this.config.SWEET_SPOT_SIZE / 2);
+        this.targetMax = this.targetCenter + (this.config.SWEET_SPOT_SIZE / 2);
         
         this.goodTime = 0.0;
         this.badTime = 0.0; // Time outside sweet spot
@@ -23,11 +24,11 @@ class GameState {
     }
     
     getRandomTemperature() {
-        return Math.floor(Math.random() * (GameConfig.TEMPERATURE_MAX - GameConfig.TEMPERATURE_MIN + 1)) + GameConfig.TEMPERATURE_MIN;
+        return Math.floor(Math.random() * (this.config.TEMPERATURE_MAX - this.config.TEMPERATURE_MIN + 1)) + this.config.TEMPERATURE_MIN;
     }
     
     getRandomShiftInterval() {
-        return Math.random() * (GameConfig.SWEET_SPOT_SHIFT_MAX_INTERVAL - GameConfig.SWEET_SPOT_SHIFT_MIN_INTERVAL) + GameConfig.SWEET_SPOT_SHIFT_MIN_INTERVAL;
+        return Math.random() * (this.config.SWEET_SPOT_SHIFT_MAX_INTERVAL - this.config.SWEET_SPOT_SHIFT_MIN_INTERVAL) + this.config.SWEET_SPOT_SHIFT_MIN_INTERVAL;
     }
     
     getCurrentTime() {
@@ -36,21 +37,21 @@ class GameState {
     }
     
     getTimeRemaining() {
-        if (!this.gameStarted) return GameConfig.TOTAL_GAME_TIME;
-        return Math.max(0, GameConfig.TOTAL_GAME_TIME - this.getCurrentTime());
+        if (!this.gameStarted) return this.config.TOTAL_GAME_TIME;
+        return Math.max(0, this.config.TOTAL_GAME_TIME - this.getCurrentTime());
     }
     
     isGameOver() {
-        return this.getCurrentTime() >= GameConfig.TOTAL_GAME_TIME || this.hasFailed;
+        return this.getCurrentTime() >= this.config.TOTAL_GAME_TIME || this.hasFailed;
     }
     
     adjustTemperature(direction) {
         if (!this.gameStarted || this.hasFailed) return;
         
-        const change = direction * GameConfig.TEMPERATURE_INCREMENT;
+        const change = direction * this.config.TEMPERATURE_INCREMENT;
         this.actualTemperature = Math.max(
-            GameConfig.TEMPERATURE_MIN,
-            Math.min(GameConfig.TEMPERATURE_MAX, this.actualTemperature + change)
+            this.config.TEMPERATURE_MIN,
+            Math.min(this.config.TEMPERATURE_MAX, this.actualTemperature + change)
         );
     }
     
@@ -59,18 +60,18 @@ class GameState {
         
         if (currentTime - this.lastTargetChange >= this.nextShiftTime) {
             // Calculate new center with random shift
-            const shift = (Math.random() * (GameConfig.SWEET_SPOT_SHIFT_MAX - GameConfig.SWEET_SPOT_SHIFT_MIN)) + GameConfig.SWEET_SPOT_SHIFT_MIN;
+            const shift = (Math.random() * (this.config.SWEET_SPOT_SHIFT_MAX - this.config.SWEET_SPOT_SHIFT_MIN)) + this.config.SWEET_SPOT_SHIFT_MIN;
             this.targetCenter += shift;
             
             // Clamp to valid range
             this.targetCenter = Math.max(
-                GameConfig.TEMPERATURE_MIN + (GameConfig.SWEET_SPOT_SIZE / 2),
-                Math.min(GameConfig.TEMPERATURE_MAX - (GameConfig.SWEET_SPOT_SIZE / 2), this.targetCenter)
+                this.config.TEMPERATURE_MIN + (this.config.SWEET_SPOT_SIZE / 2),
+                Math.min(this.config.TEMPERATURE_MAX - (this.config.SWEET_SPOT_SIZE / 2), this.targetCenter)
             );
             
             // Update min/max boundaries
-            this.targetMin = this.targetCenter - (GameConfig.SWEET_SPOT_SIZE / 2);
-            this.targetMax = this.targetCenter + (GameConfig.SWEET_SPOT_SIZE / 2);
+            this.targetMin = this.targetCenter - (this.config.SWEET_SPOT_SIZE / 2);
+            this.targetMax = this.targetCenter + (this.config.SWEET_SPOT_SIZE / 2);
             
             this.lastTargetChange = currentTime;
             this.nextShiftTime = this.getRandomShiftInterval(); // Set next random interval
@@ -84,24 +85,24 @@ class GameState {
     }
     
     updateScore() {
-        if (this.hasFailed) return;
+        if (this.hasFailed || !this.running || this.getCurrentTime() >= this.config.TOTAL_GAME_TIME) return;
         
         const inSweetSpot = this.isInSweetSpot();
         
         if (inSweetSpot) {
-            this.goodTime += GameConfig.UPDATE_INTERVAL;
+            this.goodTime += this.config.UPDATE_INTERVAL;
             this.consecutiveBadTime = 0; // Reset consecutive bad time
         } else {
-            this.badTime += GameConfig.UPDATE_INTERVAL;
-            this.consecutiveBadTime += GameConfig.UPDATE_INTERVAL;
+            this.badTime += this.config.UPDATE_INTERVAL;
+            this.consecutiveBadTime += this.config.UPDATE_INTERVAL;
             
             // Debug log for failure tracking
-            if (this.consecutiveBadTime >= GameConfig.FAILURE_WARNING_TIME) {
-                console.log(`Warning: ${this.consecutiveBadTime.toFixed(1)}s outside sweet spot (${GameConfig.MAX_FAILURE_TIME}s = failure)`);
+            if (this.consecutiveBadTime >= this.config.FAILURE_WARNING_TIME) {
+                console.log(`Warning: ${this.consecutiveBadTime.toFixed(1)}s outside sweet spot (${this.config.MAX_FAILURE_TIME}s = failure)`);
             }
             
             // Check for failure
-            if (this.consecutiveBadTime >= GameConfig.MAX_FAILURE_TIME) {
+            if (this.consecutiveBadTime >= this.config.MAX_FAILURE_TIME) {
                 this.hasFailed = true;
                 this.failureReason = "Too long outside sweet spot";
                 this.running = false;
@@ -116,13 +117,13 @@ class GameState {
         this.history.push([currentTime, isGood]);
         
         // Remove old entries
-        const cutoffTime = currentTime - GameConfig.HISTORY_RETENTION;
+        const cutoffTime = currentTime - this.config.HISTORY_RETENTION;
         this.history = this.history.filter(([time, good]) => time >= cutoffTime);
     }
     
     getDelayedFeedback() {
         const currentTime = this.getCurrentTime();
-        const targetTime = currentTime - GameConfig.FEEDBACK_DELAY;
+        const targetTime = currentTime - this.config.FEEDBACK_DELAY;
         
         // Find the closest history entry to the target time
         for (let [histTime, isGood] of this.history) {
@@ -135,10 +136,10 @@ class GameState {
     }
     
     getQualityScore() {
-        if (GameConfig.TOTAL_GAME_TIME === 0) {
+        if (this.config.TOTAL_GAME_TIME === 0) {
             return 0;
         }
-        return Math.floor((this.goodTime / GameConfig.TOTAL_GAME_TIME) * 100);
+        return Math.floor((this.goodTime / this.config.TOTAL_GAME_TIME) * 100);
     }
     
     getSweetSpotRange() {
@@ -146,15 +147,15 @@ class GameState {
     }
     
     getFailureProgress() {
-        return Math.min(this.consecutiveBadTime / GameConfig.MAX_FAILURE_TIME, 1.0);
+        return Math.min(this.consecutiveBadTime / this.config.MAX_FAILURE_TIME, 1.0);
     }
     
     isFailureWarning() {
-        return this.consecutiveBadTime >= GameConfig.FAILURE_WARNING_TIME && !this.hasFailed;
+        return this.consecutiveBadTime >= this.config.FAILURE_WARNING_TIME && !this.hasFailed;
     }
     
     getTimeUntilFailure() {
-        return Math.max(0, GameConfig.MAX_FAILURE_TIME - this.consecutiveBadTime);
+        return Math.max(0, this.config.MAX_FAILURE_TIME - this.consecutiveBadTime);
     }
     
     startGame() {
@@ -175,9 +176,9 @@ class GameState {
     
     resetGame() {
         this.actualTemperature = this.getRandomTemperature();
-        this.targetCenter = GameConfig.SWEET_SPOT_START_CENTER;
-        this.targetMin = this.targetCenter - (GameConfig.SWEET_SPOT_SIZE / 2);
-        this.targetMax = this.targetCenter + (GameConfig.SWEET_SPOT_SIZE / 2);
+        this.targetCenter = this.config.SWEET_SPOT_START_CENTER;
+        this.targetMin = this.targetCenter - (this.config.SWEET_SPOT_SIZE / 2);
+        this.targetMax = this.targetCenter + (this.config.SWEET_SPOT_SIZE / 2);
         this.goodTime = 0.0;
         this.badTime = 0.0;
         this.consecutiveBadTime = 0.0;

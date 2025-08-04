@@ -309,9 +309,17 @@ class Renderer {
         }
         
         if (currentQualityEl) {
-            if (!gameState.gameStarted) {
-                currentQualityEl.textContent = '0%';
-                currentQualityEl.style.color = '#999';
+            if (!gameState.gameStarted || !gameState.running) {
+                if (!gameState.gameStarted) {
+                    currentQualityEl.textContent = '0%';
+                    currentQualityEl.style.color = '#999';
+                } else {
+                    // Game has ended, show final score
+                    const quality = gameState.getQualityScore();
+                    currentQualityEl.textContent = `${quality}%`;
+                    currentQualityEl.style.color = quality >= 70 ? '#4CAF50' : 
+                                                 quality >= 40 ? '#FF9800' : '#f44336';
+                }
             } else {
                 const quality = gameState.getQualityScore();
                 currentQualityEl.textContent = `${quality}%`;

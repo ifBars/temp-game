@@ -3,10 +3,10 @@
  */
 class GameController {
     constructor() {
-        this.gameState = new GameState();
         this.feedbackSystem = new FeedbackSystem();
         this.inputHandler = new InputHandler();
         this.inventorySystem = new InventorySystem();
+        this.gameState = new GameState();
         
         // Get canvas and create renderer
         this.canvas = document.getElementById('gameCanvas');
@@ -21,6 +21,7 @@ class GameController {
         
         // Update inventory display
         this.updateInventoryDisplay();
+        this.updateCashDisplay();
     }
     
     setupEventListeners() {
@@ -69,6 +70,10 @@ class GameController {
         const clearInventoryBtn = document.getElementById('clearInventory');
         if (clearInventoryBtn) {
             clearInventoryBtn.addEventListener('click', () => this.clearInventory());
+        }
+        const sellBtn = document.getElementById('sellAll');
+        if (sellBtn) {
+            sellBtn.addEventListener('click', () => this.handleSellAll());
         }
     }
     
@@ -166,6 +171,7 @@ class GameController {
         
         // Update inventory display
         this.updateInventoryDisplay();
+        this.updateCashDisplay();
     }
     
     resetGame() {
@@ -181,6 +187,7 @@ class GameController {
         
         // Hide any notifications
         this.hideNotifications();
+        this.updateCashDisplay();
     }
     
     showRewardNotification(result, finalScore) {
@@ -325,6 +332,22 @@ class GameController {
         if (confirm('Are you sure you want to clear all your collected trays and stats? This cannot be undone.')) {
             this.inventorySystem.clearInventory();
             this.updateInventoryDisplay();
+        }
+    }
+
+    handleSellAll() {
+        const value = this.inventorySystem.sellAllTrays();
+        this.updateInventoryDisplay();
+        this.updateCashDisplay();
+        // Optional: show notification
+        alert(`Sold all trays for ${value} cash!`);
+    }
+
+    updateCashDisplay() {
+        const cash = this.inventorySystem.getCash();
+        const cashElement = document.getElementById('cash-value');
+        if (cashElement) {
+            cashElement.textContent = cash;
         }
     }
 } 

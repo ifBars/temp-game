@@ -15,6 +15,7 @@ class InventorySystem {
                 // Add new properties if they don't exist (for backwards compatibility)
                 if (!this.data.failedCooks) this.data.failedCooks = [];
                 if (typeof this.data.totalFailures !== 'number') this.data.totalFailures = 0;
+                if (typeof this.data.cash !== 'number') this.data.cash = 0;
             } else {
                 this.data = {
                     trays: [],
@@ -22,7 +23,8 @@ class InventorySystem {
                     totalGames: 0,
                     totalFailures: 0,
                     bestScore: 0,
-                    totalTrays: 0
+                    totalTrays: 0,
+                    cash: 0
                 };
             }
         } catch (error) {
@@ -34,7 +36,8 @@ class InventorySystem {
                 totalGames: 0,
                 totalFailures: 0,
                 bestScore: 0,
-                totalTrays: 0
+                totalTrays: 0,
+                cash: 0
             };
         }
     }
@@ -233,7 +236,8 @@ class InventorySystem {
             totalGames: 0,
             totalFailures: 0,
             bestScore: 0,
-            totalTrays: 0
+            totalTrays: 0,
+            cash: 0
         };
         this.saveInventory();
     }
@@ -250,6 +254,7 @@ class InventorySystem {
                 // Ensure new properties exist
                 if (!this.data.failedCooks) this.data.failedCooks = [];
                 if (typeof this.data.totalFailures !== 'number') this.data.totalFailures = 0;
+                if (typeof this.data.cash !== 'number') this.data.cash = 0;
                 this.saveInventory();
                 return true;
             }
@@ -257,5 +262,53 @@ class InventorySystem {
             console.error('Failed to import data:', e);
         }
         return false;
+    }
+    
+    /**
+     * Get the current cash amount
+     */
+    getCash() {
+        return this.data.cash || 0;
+    }
+    
+    /**
+     * Calculate the value of a tray based on its quality
+     */
+    getTrayValue(quality) {
+        const values = {
+            "Amazing": 50,
+            "Excellent": 40,
+            "Great": 30,
+            "Good": 20,
+            "Average": 15,
+            "Poor": 10
+        };
+        return values[quality] || 5;
+    }
+    
+    /**
+     * Sell all trays for cash
+     */
+    sellAllTrays() {
+        let totalValue = 0;
+        
+        // Calculate total value of all trays
+        this.data.trays.forEach(tray => {
+            totalValue += this.getTrayValue(tray.quality);
+        });
+        
+        // Add cash to inventory
+        this.data.cash += totalValue;
+        
+        // Clear all trays
+        this.data.trays = [];
+        this.data.totalTrays = 0;
+        
+        // Save the updated inventory
+        this.saveInventory();
+        
+        console.log(`Sold all trays for ${totalValue} cash. New total: ${this.data.cash}`);
+        
+        return totalValue;
     }
 } 

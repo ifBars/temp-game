@@ -125,13 +125,6 @@ header h1 {
     gap: 15px;
 }
 
-.game-secondary {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: start;
-}
-
 /* Info panels */
 .info-panel, .controls-panel, .instructions-panel, .inventory-panel {
     background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
@@ -774,5 +767,39 @@ footer a:hover {
     
     .failure-text {
         font-size: 1rem;
+    }
+} 
+
+/* After .clear-inventory-btn */
+.sell-btn {
+    width: 100%;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #4CAF50;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.sell-btn:hover {
+    background: #45a049;
+}
+
+
+    font-weight: bold;
+}
+
+/* Adjust game-secondary to accommodate shop */
+.game-secondary {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 1200px) {
+    .game-secondary {
+        grid-template-columns: 1fr;
     }
 } 
